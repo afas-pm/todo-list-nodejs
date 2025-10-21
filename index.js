@@ -1,7 +1,12 @@
+// ======================================
+// 🟢 Required Modules
+// ======================================
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
-const port = 4000;
+
+// ✅ Use Render’s environment port or fallback for local development
+const PORT = process.env.PORT || 4000;
 
 // ✅ Database and Models
 const db = require("./config/mongoose");
@@ -203,10 +208,10 @@ app.get("/logout", (req, res) => {
 // ======================================
 // 🟢 Start Server
 // ======================================
-app.listen(port, (err) => {
+app.listen(PORT, (err) => {
   if (err) {
     console.error("❌ Server error:", err);
   } else {
-    console.log(`🚀 Server running at http://localhost:${port}`);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
   }
 });
