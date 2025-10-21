@@ -1,0 +1,210 @@
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/alltask.css">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/7692/7692809.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="nav-container">
+    <div class="nav">
+      <div class="nav-logo-section">
+        <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/7692/7692809.png" alt="" class="nav-logo"></a>
+        <a href="#"><span class="nav-logo-name">Todos.</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <!-- Sidebar -->
+    <div class="leftside-nav">
+      <div class="nav-heading"><h5>Collection</h5></div>
+      <ul type="none" class="leftside-nav-ul">
+        <a href="/dashboard"><li>Pending Tasks</li></a>
+        <a href="/completedtask"><li>Completed Tasks</li></a>
+        <a href="/alltask"><li class="page-link">All Tasks</li></a>
+      </ul>
+    </div>
+
+    <!-- Main section -->
+    <div class="main-section">
+      <div class="page-info"><h5>Dashboard</h5></div>
+      <div class="upper-section">
+        <div class="greeting-user-section">
+          <h2 class="greeting-user">--------</h2>
+          <div>Here are all your tasks</div>
+        </div>
+      </div>
+
+      <div class="task-info">
+        <h5>All Tasks</h5>
+        <div class="add-task-button-section">
+          <button class="add-task-button">Add New Task</button>
+        </div>
+      </div>
+
+      <div class="bottom-section">
+        <% 
+          let totalWork = 0, totalPersonal = 0, totalShopping = 0, totalOther = 0;
+          let completedWork = 0, completedPersonal = 0, completedShopping = 0, completedOther = 0;
+          let total = 0, completed = 0;
+
+          for (let i of dashboard) {
+            total++;
+            if (i.completed) completed++;
+            if (i.categoryChoosed === "work") totalWork++;
+            if (i.categoryChoosed === "personal") totalPersonal++;
+            if (i.categoryChoosed === "shopping") totalShopping++;
+            if (i.categoryChoosed === "others") totalOther++;
+            if (i.categoryChoosed === "work" && i.completed) completedWork++;
+            if (i.categoryChoosed === "personal" && i.completed) completedPersonal++;
+            if (i.categoryChoosed === "shopping" && i.completed) completedShopping++;
+            if (i.categoryChoosed === "others" && i.completed) completedOther++;
+          }
+          let pending = total - completed;
+        %>
+
+        <!-- Category Sections -->
+        <% const categories = [
+          { key: "work", name: "Work", icon: "https://cdn-icons-png.flaticon.com/512/3281/3281289.png", total: totalWork },
+          { key: "personal", name: "Personal", icon: "https://cdn-icons-png.flaticon.com/512/1077/1077012.png", total: totalPersonal },
+          { key: "shopping", name: "Shopping", icon: "https://cdn-icons-png.flaticon.com/512/4290/4290854.png", total: totalShopping },
+          { key: "others", name: "Others", icon: "https://cdn-icons-png.flaticon.com/512/7245/7245102.png", total: totalOther }
+        ]; %>
+
+        <% categories.forEach(cat => { %>
+          <div class="<%= cat.key %>-category">
+            <ul type="none" class="category-ul">
+              <div class="category-section" id="<%= cat.key %>-category">
+                <div class="category-section-left">
+                  <img src="<%= cat.icon %>" alt="">
+                  <h5><%= cat.name %></h5>
+                </div>
+                <div><span class="category-section-right"><%= cat.total %> Tasks</span></div>
+              </div>
+
+              <% dashboard.filter(i => i.categoryChoosed === cat.key).forEach(i => { %>
+                <li class="<%= cat.key %>-category-list">
+                  <div class="list-main-section">
+                    <div class="left-side-section">
+                      <div class="inner-left-side">
+                        <div class="display-task"><%= i.task %></div>
+                        <div class="display-des"><%= i.description %></div>
+                      </div>
+                      <div class="right-side"><%= i.date %></div>
+                    </div>
+
+                    <% if (i.completed) { %>
+                      <div class="complete-task-section">
+                        <a href="/complete-task/?id=<%= i._id %>">
+                          <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="">
+                        </a>
+                      </div>
+                    <% } else { %>
+                      <div class="delete-task-section">
+                        <a href="/delete-task/?id=<%= i._id %>">
+                          <img src="https://cdn-icons-png.flaticon.com/512/6460/6460112.png" alt="">
+                        </a>
+                      </div>
+                    <% } %>
+                  </div>
+
+                  <div class="list-buttom-section">
+                    <div class="left-buttom-side-section">
+                      <div class="inner-left-side">
+                        <div>Task Created</div>
+                        <div><%= i.currentDate %></div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              <% }); %>
+            </ul>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="aside-section">
+      <div class="profile-section">
+        <div class="username-section">
+          <div>Hello, <%= name %></div>
+        </div>
+        <div class="userimage">
+          <img src="https://cdn-icons-png.flaticon.com/512/2202/2202112.png" alt="">
+          <div class="colon">:</div>
+        </div>
+      </div>
+
+      <div class="profile-task-info-section">
+        <div class="profile-total-tasks-info">
+          <div class="total-tasks-info-heading">
+            <h5 class="info-heading">Total Tasks</h5>
+            <h5 class="info"><span class="total-task-line">|</span> <%= total %></h5>
+          </div>
+        </div>
+        <div class="profile-completed-tasks-info">
+          <div class="completed-tasks-info-heading">
+            <h5 class="info-heading">Completed Tasks</h5>
+            <h5 class="info"><span class="completed-task-line">|</span> <%= completed %></h5>
+          </div>
+        </div>
+        <div class="profile-pending-tasks-info">
+          <div class="pending-tasks-info-heading">
+            <h5 class="info-heading">Pending Tasks</h5>
+            <h5 class="info"><span class="pending-task-line">|</span> <%= pending %></h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div id="add-task-section">
+    <div class="close-add-task-section">
+      <img src="https://cdn-icons-png.flaticon.com/512/2976/2976286.png" alt="">
+    </div>
+
+    <form action="/addtask" method="post" id="add-task-form">
+      <div class="input-field">
+        <input type="text" name="task" placeholder="Enter Todo" class="input-task" required>
+        <textarea name="description" id="description" placeholder="Enter Description"></textarea>
+      </div>
+
+      <div class="category-heading"><h5>Category</h5></div>
+
+      <div class="add-task-category-main-section">
+        <div class="add-task-category-section">
+          <div class="category" id="work" data-id="work">
+            <img src="https://cdn-icons-png.flaticon.com/512/3281/3281289.png" alt=""><span>Work</span>
+          </div>
+          <div class="category" id="personal" data-id="personal">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt=""><span>Personal</span>
+          </div>
+          <div class="category" id="shopping" data-id="shopping">
+            <img src="https://cdn-icons-png.flaticon.com/512/4290/4290854.png" alt=""><span>Shopping</span>
+          </div>
+          <div class="category" id="others" data-id="others">
+            <img src="https://cdn-icons-png.flaticon.com/512/7245/7245102.png" alt=""><span>Others</span>
+          </div>
+          <input type="hidden" name="categoryChoosed" id="category-choosed">
+        </div>
+      </div>
+
+      <div class="date-time">
+        <input type="date" name="date" class="input-date">
+        <input type="time" name="time" class="input-time">
+      </div>
+
+      <button class="add-new-task">Add New Task</button>
+    </form>
+  </div>
+
+  <footer><span>@ Developed By Ankit Vishwakarma</span></footer>
+
+  <script src="/js/dashboard.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+</body>
+</html>
